@@ -58,3 +58,26 @@ void inserir(LDDE *lista, int valor){
     }
     lista-> qtd ++; //incrementação da quantidade
 }
+
+void mostrar(LDDE *lista){
+    Celula *atual = lista ->primeiro;
+
+    while(atual != NULL){
+        printf("%d ", atual-> valor);
+        atual = atual->proximo;
+    }
+    printf("\n");
+}
+int main(){
+    LDDE *lista = criar_lista();
+    inserir(lista, 12); //inicio em lista vazia
+    mostrar(lista);
+    inserir(lista, 8); //inicio em lista não vazia
+    mostrar(lista);
+    inserir(lista, 18); //final
+    mostrar(lista);
+    inserir(lista, 15); //meio
+    mostrar(lista); 
+
+    return 0;
+}
