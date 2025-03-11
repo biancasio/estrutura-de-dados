@@ -50,29 +50,43 @@ void inserir_valor(ListaDuplamenteEncadeada *lista, int valor) {
     No *novo = criar_no(valor);
     No *anterior = NULL;
     No *atual = lista->inicio;
-    //posição de inserção
-    while(atual != NULL && atual-> valor < novo->valor){
+
+    while (atual != NULL && atual->valor < novo->valor)
+    {
         anterior = atual;
         atual = atual->proximo;
     }
 
-    //Inserir no INICIO:
-    if(anterior == NULL){
+    //Add termo em uma lista vazia
+    if (lista->quantidade == 0)
+    {
         lista->inicio = novo;
-        if(atual!= NULL){
-            novo ->proximo = atual;
-            atual->anterior = novo;
-        }
-    }else if(atual == NULL){ //Inserir no FINAL
-        anterior->proximo = novo;
-        novo->anterior= anterior;
-    }else { //inserir no MEIO
-        anterior->proximo=novo;
-        novo->anterior = anterior;
-        novo ->proximo = atual;
-        atual->anterior = novo; 
     }
-    lista-> quantidade ++; //incrementação da quantidade
+
+    //Add termo em uma lista não vazia na primeira posição
+    else if(anterior == NULL && atual != NULL)
+    {
+        lista->inicio = novo;
+        novo->proximo = atual;
+        atual->anterior = novo;
+    }
+
+    //Add termo no fim da lista
+    else if(anterior != NULL && atual == NULL){
+        anterior->proximo = novo;
+        novo->anterior = anterior;
+    }
+
+    //Add termo no meio da lista
+    else{
+        anterior->proximo = novo;
+        novo->anterior = anterior;
+        novo->proximo = atual;
+        atual->anterior = novo;
+
+    }
+
+    lista->quantidade++;
 }
 
 /**
@@ -81,15 +95,14 @@ void inserir_valor(ListaDuplamenteEncadeada *lista, int valor) {
  * @param lista Ponteiro para a lista a ser exibida.
  */
 void exibir_lista(ListaDuplamenteEncadeada *lista) {
-    No *atual = lista ->inicio;
-    printf("Início -> ");
+    No *atual = lista->inicio;
 
+    printf("Início -> ");
     while(atual != NULL){
-        printf("%d ", atual-> valor);
-        atual = atual->proximo;
+        printf("%d ", atual->valor);
+        atual= atual->proximo;
     }
-    printf("<- Final");
-    printf("\n");
+    printf("<- Final\n");
 }
 
 /**
@@ -98,18 +111,20 @@ void exibir_lista(ListaDuplamenteEncadeada *lista) {
  * @param lista Ponteiro para a lista a ser exibida.
  */
 void exibir_lista_invertida(ListaDuplamenteEncadeada *lista) {
-    No *atual = lista ->inicio;
-    printf("Final -> ");
+    No *atual = lista->inicio;
 
-    while(atual-> proximo != NULL){
+
+    while(atual != NULL && atual->proximo != NULL){
         atual = atual->proximo;
     }
-    while(atual != NULL ){
-        printf("%d ", atual-> valor);
+
+    printf("Final -> ");
+    while(atual != NULL){
+        printf("%d ", atual->valor);
         atual = atual->anterior;
     }
-    printf("<- Inicio"); 
-    printf("\n");
+    printf("<- Início\n");
+
 }
 
 /**
@@ -119,29 +134,42 @@ void exibir_lista_invertida(ListaDuplamenteEncadeada *lista) {
  * @param valor O valor a ser removido da lista.
  */
 void remover_valor(ListaDuplamenteEncadeada *lista, int valor) {
-    No *proximo = atual->proximo;
-    No *anterior = NULL;
-    No *atual = lista->inicio;
-
-    while(atual != NULL && atual->valor != valor){
-        anterior = atual;
-        atual = atual->proximo;
-    }
-
-    if (atual == NULL){
+    if(lista->inicio == NULL){
         return;
     }
 
-    if(anterior == NULL){ //anterior nulo significa que o meu atual existe
-        lista->inicio = atual->proximo; //remover no inicio
-        atual->anterior = NULL;
-    
-    } else if(proximo == NULL){ //
-        anterior->proximo = atual->proximo; 
-        proximo-> anterior = atual-> anterior//remover no meio e no fim
+    No *atual = lista->inicio;
+
+    if(atual->valor == valor){ // Valor é o Primeiro Item
+        if(atual->proximo == NULL){ // Caso Não tenha mais Itens
+            lista->inicio = NULL;
+        }
+        else{ // Caso tenha mais itens
+            lista->inicio = atual->proximo;
+            atual->proximo->anterior = NULL; // O anterior do próximo item que será alterado para NULL 
+        }
+        free(atual);
+        lista->quantidade--;
+        return;
     }
-    lista -> quantidade --; //decrementa a qntd 
-    free(atual); //remove
+
+    while(atual != NULL && atual->valor != valor){
+        if(atual->proximo == NULL && atual->valor != valor){ // o valor não existe
+            return;
+        }      
+        atual = atual->proximo;
+    }
+
+    if(atual->proximo == NULL){ // O Atual é o ultimo da Lista
+        atual->anterior->proximo = NULL;
+    }
+    else { // O Atual está no meio da Lista;
+        atual->anterior->proximo = atual->proximo;
+        atual->proximo->anterior = atual->anterior;
+    }
+
+    lista->quantidade--;
+    free(atual);
 }
 
 int main(void) {
